@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <time.h>
+#include "include/intlist.h"
+
+int main(void)
+{
+	IntList *randomList = CreateIntList();
+	srand(time(0));
+
+	for (int i = 0; i < 100; i++) {
+		int random = rand() % 10;
+		IntListAppend(randomList, random);
+		printf("%d ", random);
+	}
+
+	SortIntList(&randomList);
+
+	printf("\n");
+
+	list_foreach(Int, randomList, curr) {
+		printf("%d ", curr->value);
+	}
+
+	return 0;
+}
