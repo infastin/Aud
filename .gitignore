@@ -1,8 +1,6 @@
 CMakeFiles/
 .ccls-cache/
-cmake_install.cmake
 CMakeCache.txt
 compile_commands.json
 liblib.a
 Makefile
-
