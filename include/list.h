@@ -89,9 +89,9 @@
 	\
 	prefix ## List *Create ## prefix ## List(void); \
 	\
-	void Free ## prefix ## List(prefix ## List *list); \
+	int Free ## prefix ## List(prefix ## List *list); \
 	\
-	void Clear ## prefix ## List(prefix ## List *list); \
+	int Clear ## prefix ## List(prefix ## List *list); \
 	\
 	type *Pop ## prefix ## List(prefix ## List *list); \
 	\
@@ -102,6 +102,9 @@
 	\
 	prefix ## List *Merge ## prefix ## Lists(prefix ## List *list1, prefix ## List *list2); \
 	\
+	int PMerge ## prefix ## Lists(prefix ## List **list1, prefix ## List *list2); \
+	\
+	int PMergeBefore ## prefix ## Lists(prefix ## List **list1, prefix ## List *list2); \
 
 
 /* Declare macro */
@@ -119,7 +122,7 @@
 		\
 		return list; \
 	} \
-	void \
+	int \
 	Free ## prefix ## List(prefix ## List *list) { \
 		if (list != NULL) { \
 			prefix ## ListNode *node = list->first, \
@@ -131,10 +134,13 @@
 			} \
 			\
 			free(list); \
+			return 1; \
+		} else { \
+			return 0; \
 		} \
 	} \
 	\
-	void \
+	int \
 	Clear ## prefix ## List(prefix ## List *list) { \
 		if (list != NULL) { \
 			prefix ## ListNode *node = list->first, \
@@ -148,6 +154,9 @@
 			list->count = 0; \
 			list->first = NULL; \
 			list->last = NULL; \
+			return 1; \
+		} else { \
+			return 0; \
 		} \
 	} \
 	\
@@ -231,16 +240,76 @@
 	\
 	prefix ## List \
 	*Merge ## prefix ## Lists(prefix ## List *list1, prefix ## List *list2) { \
-		prefix ## List *result = Create ## prefix ## List(); \
-		\
-		list_foreach(prefix, list1, curr) { \
-			prefix ## ListAppend(result, curr->value); \
+		if (list1 != NULL && list2 != NULL) { \
+			prefix ## List *result = Create ## prefix ## List(); \
+			\
+			if (result == NULL) { \
+				return NULL; \
+			} \
+			\
+			list_foreach(prefix, list1, curr) { \
+				prefix ## ListAppend(result, curr->value); \
+			} \
+			list_foreach(prefix, list2, curr) { \
+				prefix ## ListAppend(result, curr->value); \
+			} \
+			\
+			return result; \
+		} else { \
+			return NULL; \
 		} \
-		list_foreach(prefix, list2, curr) { \
-			prefix ## ListAppend(result, curr->value); \
-		} \
-		\
-		return result; \
 	} \
+	\
+	int \
+	PMerge ## prefix ## Lists(prefix ## List **list1, prefix ## List *list2) { \
+		if (list1 != NULL && list2 != NULL) { \
+			list_foreach(prefix, list2, curr) { \
+				prefix ## ListAppend(*list1, curr->value); \
+			} \
+			return 1; \
+		} else { \
+			return 0; \
+		} \
+	} \
+	int \
+	PMergeBefore ## prefix ## Lists(prefix ## List **list1, prefix ## List *list2) { \
+		if (list1 != NULL && list2 != NULL) { \
+			int i = 0; \
+			prefix ## ListNode *first = (*list1)->first, \
+							   *last = NULL; \
+			list_foreach(prefix, list2, curr) { \
+				prefix ## ListNode *node = (prefix ## ListNode*)malloc(sizeof(prefix ## ListNode)); \
+				if (node == NULL) { \
+					return 0; \
+				} \
+				node->next = NULL; \
+				node->prev = NULL; \
+				node->value = curr->value; \
+				\
+				if ((*list1)->first == NULL && (*list1)->last == NULL) { \
+					(*list1)->first = node; \
+					(*list1)->last = node; \
+					first = (*list1)->first; \
+				} else { \
+					node->next = first; \
+					if (i == 0) \
+						last = node; \
+					if (first->prev != NULL) \
+						first->prev->next = node; \
+					node->prev = first->prev; \
+					first->prev = node; \
+					i++; \
+				} \
+				\
+				(*list1)->count++; \
+			} \
+			if (last != NULL) \
+				(*list1)->first = last; \
+			return 1; \
+		} else { \
+			return 0; \
+		} \
+	}
+	
 
 #endif

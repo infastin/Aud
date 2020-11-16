@@ -7,13 +7,13 @@ int main(void)
 	IntList *randomList = CreateIntList();
 	srand(time(0));
 
-	for (int i = 0; i < 100; i++) {
-		int random = rand() % 10;
+	for (int i = 0; i < 50; i++) {
+		int random = rand() % 100;
 		IntListAppend(randomList, random);
 		printf("%d ", random);
 	}
 
-	SortIntList(&randomList);
+	RSortIntList(&randomList);
 
 	printf("\n");
 

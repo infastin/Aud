@@ -9,4 +9,7 @@ DeclareHeaderList(IntP, int*)
 /* Sort list using quick sort */
 void SortIntList(IntList **list);
 
+/* Sort list backward using quck sort */
+void RSortIntList(IntList **list);
+
 #endif
