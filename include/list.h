@@ -105,6 +105,8 @@
 	int PMerge ## prefix ## Lists(prefix ## List **list1, prefix ## List *list2); \
 	\
 	int PMergeBefore ## prefix ## Lists(prefix ## List **list1, prefix ## List *list2); \
+	\
+	void Reverse ## prefix ## List(prefix ## List **list); \
 
 
 /* Declare macro */
@@ -308,6 +310,22 @@
 			return 1; \
 		} else { \
 			return 0; \
+		} \
+	}\
+	void \
+	Reverse ## prefix ## List(prefix ## List **list) { \
+		if (list != NULL) { \
+			prefix ## ListNode *first = (*list)->first, \
+						   	   *last = (*list)->last; \
+			type tempvalue; \
+			for (int i = 0; i < (*list)->count / 2; i++) { \
+				tempvalue = first->value; \
+				first->value = last->value; \
+				last->value = tempvalue; \
+				\
+				first = first->next; \
+				last = last->prev; \
+			} \
 		} \
 	}
 	
