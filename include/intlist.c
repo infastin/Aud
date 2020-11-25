@@ -1,5 +1,6 @@
 #include "intlist.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 DeclareList(Int, int)
 DeclareList(IntP, int*)

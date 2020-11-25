@@ -1,7 +1,7 @@
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
-#include "include/intlist.h"
+#include "intlist.h"
+#include "vector.h"
 
 void task1(void);
 void task2(void);
@@ -11,7 +11,7 @@ void task4(void);
 int main(void) {
 	// task1();
 	// task2();
-	// task3();
+	task3();
 	// task4();
 
 	printf("\n");
@@ -76,7 +76,6 @@ void task1(void) {
 		if (success) {
 			int count = list->count;
 			int **listValues = PopIntPList(list);
-			FreeIntPList(list);
 			
 			for (int i = 0; i < count; i++) {
 				printf("n%d: %d, %d\n", ((int**)listValues)[i][0], ((int**)listValues)[i][1], ((int**)listValues)[i][2]);
@@ -87,6 +86,8 @@ void task1(void) {
 		} else {
 			printf("\nПроизошла ошибка при записи координат точки. Перезапустите программу.");
 		}
+
+		FreeIntPList(list);
 	} else {
 		printf("\nПроизошла ошибка при записи количества точек. Перезапустите программу.");
 	}
@@ -152,9 +153,6 @@ void task2(void) {
 			int *evenValues = PopIntList(even),
 				*oddValues = PopIntList(odd);
 
-			FreeIntList(even);
-			FreeIntList(odd);
-
 			printf("\nЧетные числа:\n");
 			for (int i = 0; i < evenCount; i++) {
 				printf(" %d\n", evenValues[i]);
@@ -170,6 +168,9 @@ void task2(void) {
 		} else {
 			printf("\nПроизошла ошибка при записи целого числа. Перезапустите программу.");
 		}
+
+		FreeIntList(even);
+		FreeIntList(odd);
 	} else {
 		printf("\nПроизошла ошибка при записи количества точек. Перезапустите программу.");
 	}
@@ -215,53 +216,81 @@ void task3(void) {
 		}
 
 		if (xyScanned) {
-			char *aStr, *bStr, *cStr;
+			char *result = CreateCharVector();
 
 			if (a != 0) {
-				asprintf(&aStr, "%dx ", a);
-			} else {
-				asprintf(&aStr, "");
+				if (a < 0) {
+					CharVectorPush(&result, '-');
+				}
+
+				int aTemp = abs(a);
+				if (aTemp != 1) {
+					while (aTemp != 0) {
+						CharVectorPush(&result, (aTemp % 10) + 48);
+						aTemp /= 10;
+					}
+				}
+
+				CharVectorPush(&result, 'x');
+				CharVectorPush(&result, '^');
+				CharVectorPush(&result, '2');
+				CharVectorPush(&result, ' ');
 			}
 
 			if (b != 0) {
 				if (a != 0) {
-					char sign;
 					if (b > 0) {
-						sign = '+';
+						CharVectorPush(&result, '+');
 					} else {
-						sign = '-';
+						CharVectorPush(&result, '-');
 					}
 
-					asprintf(&bStr, "%c %dy ", sign, abs(b));
+					CharVectorPush(&result, ' ');
 				} else {
-					asprintf(&bStr, "%dy ", b);
+					if (b < 0) {
+						CharVectorPush(&result, '-');
+					}
 				}
-			} else {
-				asprintf(&bStr, "");
+
+				int bTemp = abs(b);
+				if (bTemp != 1) {
+					while (bTemp != 0) {
+						CharVectorPush(&result, (bTemp % 10) + 48);
+						bTemp /= 10;
+					}
+				}
+
+				CharVectorPush(&result, 'y');
+				CharVectorPush(&result, ' ');
 			}
 
-			if (c != 0) {	
-				char sign;
+			if (c != 0) {
 				if (c > 0) {
-					sign = '+';
+					CharVectorPush(&result, '+');
 				} else {
-					sign = '-';
+					CharVectorPush(&result, '-');
 				}
 
-				asprintf(&cStr, "%c %d ", sign, abs(c));
-			} else {
-				asprintf(&cStr, "");
+				CharVectorPush(&result, ' ');
+
+				int cTemp = abs(c);
+				while (cTemp != 0) {
+					CharVectorPush(&result, (cTemp % 10) + 48);
+					cTemp /= 10;
+				}
+
+				CharVectorPush(&result, ' ');
 			}
+
+			CharVectorPush(&result, '\0');
 
 			if ((a*x*x + b*y + c) == 0) {
-				printf("\nТочка (%d, %d) лежит на прямой, заданной уравнением %s%s%s= 0", x, y, aStr, bStr, cStr);
+				printf("\nТочка (%d, %d) лежит на прямой, заданной уравнением %s= 0", x, y, result);
 			} else {
-				printf("\nТочка (%d, %d) не лежит на прямой, заданной уравнением %s%s%s= 0", x, y, aStr, bStr, cStr);
+				printf("\nТочка (%d, %d) не лежит на прямой, заданной уравнением %s= 0", x, y, result);
 			}
 			
-			free(aStr);
-			free(bStr);
-			free(cStr);
+			FreeCharVector(result);
 		} else {
 			printf("\nПроизошла ошибка при записи координат точки. Перезапустите программу.");
 		}
@@ -341,6 +370,8 @@ void task4(void) {
 		} else {
 			printf("\nПроизошла ошибка при записи двоичного числа. Перезапустите программу.");
 		}
+
+		free(bin);
 	} else {
 		printf("\nПроизошла ошибка при записи количества разрядов. Перезапустите программу.");
 	}

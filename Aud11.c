@@ -2,12 +2,7 @@
 #include <time.h>
 #include <limits.h>
 #include <string.h>
-#include "include/intlist.h"
-
-IntList *func1(int numb);
-IntList *func2(int numb);
-int func3(int numb);
-int func4(int numb);
+#include "vector.h"
 
 void task1(void);
 
@@ -17,45 +12,44 @@ int main(void)
 	return 0;
 }
 
-IntList *func1(int numb) {
-	IntList *result = CreateIntList();
+int func1(int numb) {
+	int *temp = CreateIntVector();
 	int i;
+	if (numb == 1) IntVectorPush(&temp, 1);
 	while (numb > 1) {
 		for (i = 9; i > 0; i--) {
 			if (numb % i == 0) {
 				numb /= i;
-				IntListAppend(result, i);
+				IntVectorPush(&temp, i);
 				break;
 			}
 		}
 
 		if (i == 1 && numb > 9) {
-			return NULL;
+			return -1;
 		}
 	}
 
-	int temp = 0;
-	ReverseIntList(&result);
-	list_foreach(Int, result, curr) {
-		if (temp < (INT_MAX / 10)) {
-			temp *= 10;
-			if (temp < (INT_MAX - curr->value)) {
-				temp += curr->value;
+	int result = 0;
+	ReverseIntVector(&temp);
+	for (int i = 0; i < VectorGetCount(temp); ++i) {
+		if (result <= (INT_MAX / 10)) {
+			result *= 10;
+			if (result <= (INT_MAX - temp[i])) {
+				result += temp[i];
 			} else {
-				return NULL;
+				return -1;
 			}
 		} else {
-			return NULL;
+			return -1;
 		}
 	}
 
+	FreeVector(temp);
 	return result;
 }
 
-IntList *func2(int numb) {
-
-}
-
+voi
 
 void task1(void) {
 	int n, nScan, nScanned = 0;
@@ -79,11 +73,9 @@ void task1(void) {
 	}
 
 	if (nScanned) {
-		IntList *result1 = func1(n);
+		int r1 = func1(n);
 
-		list_foreach(Int, result1, curr) {
-			printf("%d", curr->value);
-		}
+		printf("%d\n", r1);
 	} else {
 		printf("\nПроизошла ошибка при записи количества точек. Перезапустите программу.");
 	}
