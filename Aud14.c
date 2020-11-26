@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 
 		if (!err) {
 			for (int i = 0; i < 3; ++i) {
-				UnHashRot13(0, goal[i], &output, 5);
+				UnHashRot13(goal[i], &output, 5);
 
 				printf("%d: ", goal[i]);
 				for (int i = 0; i < 5; ++i) {

@@ -45,9 +45,10 @@ unsigned int UnHashRot13Helper(unsigned int hash, unsigned int goal, int **outpu
 	}
 }
 
-unsigned int UnHashRot13(unsigned int hash, unsigned int goal, int **output, int size) {
+unsigned int UnHashRot13(unsigned int goal, int **output, int size) {
+	int hash = 0;
+	
 	for (int i = 65; i <= 122; i++) {
-		int temp = hash;
 		hash += i;
 		hash -= (hash << 13) | (hash >> 19);
 		
@@ -55,7 +56,7 @@ unsigned int UnHashRot13(unsigned int hash, unsigned int goal, int **output, int
 			(*output)[0] = i;
 			return 1;
 		} else {
-			hash = temp;
+			hash = 0;
 		}
 	}
 
