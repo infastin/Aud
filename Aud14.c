@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
 		}
 
 		free(output);
+		free(goal);
 	} else {
 		fprintf(stderr, "%s\n", strerror(errno));
 	}
